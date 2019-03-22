@@ -9,7 +9,7 @@ Created on Wed Mar 20 11:02:47 2019
 import torch.nn as nn
 import torch.utils.model_zoo as model_zoo
 __all__ = [
-        'VGG', 'vgg11', 'vgg11_bn','vgg13','vgg13_bn','vgg_16','vgg16_bn','vgg19','vgg19','vgg19_bn',]
+        'VGG', 'vgg11', 'vgg11_bn','vgg13','vgg13_bn','vgg16','vgg16_bn','vgg19','vgg19','vgg19_bn',]
 model_urls = {
     'vgg11': 'https://download.pytorch.org/models/vgg11-bbd30ac9.pth',
     'vgg13': 'https://download.pytorch.org/models/vgg13-c768596a.pth',
@@ -22,19 +22,19 @@ model_urls = {
 }
 
 class VGG(nn.Module):
-    def __init__(self,features,num_classes = 1000, init_weights = True):
-        super(VGG,self).__init__()
+    def __init__(self, features, num_classes=1000, init_weights=True):
+        super(VGG, self).__init__()
         self.features = features
         self.avgpool = nn.AdaptiveAvgPool2d((7, 7))
-        self.classifier == nn.Sequential(
-                nn.Linear(512 * 7 * 7,4096),
-                nn.ReLu(True),
-                nn.Dropout(),
-                nn.Linear(4096,4096),
-                nn.ReLu(True),
-                nn.Dropout(),
-                nn.Linear(4096,num_classes),
-                )
+        self.classifier = nn.Sequential(
+            nn.Linear(512 * 7 * 7, 4096),
+            nn.ReLU(True),
+            nn.Dropout(),
+            nn.Linear(4096, 4096),
+            nn.ReLU(True),
+            nn.Dropout(),
+            nn.Linear(4096, num_classes),
+        )
         if init_weights:
             self._initialize_weights()
     
@@ -68,11 +68,11 @@ def make_layers(cfg,batch_norm = False):
         else:
             conv2d = nn.Conv2d(in_channels,v,kernel_size = 3, padding = 1)
             if batch_norm:
-                layers += [conv2d, nn.BatchNorm2d(v),nn.ReLu(inplace = True)]
+                layers += [conv2d, nn.BatchNorm2d(v),nn.ReLU(inplace = True)]
             else:
-                layers += [conv2d, nn.ReLu(inplace = True)]
+                layers += [conv2d, nn.ReLU(inplace = True)]
             in_channels = v
-    return nn.Seqential(*layers)
+    return nn.Sequential(*layers)
     
     
 cfg = {
@@ -97,7 +97,7 @@ def vgg11_bn(pretrained = False, **kwargs):
 def vgg13_bn(pretrained = False, **kwargs):
     ##  configuration 'B'
     if pretrained:
-        kwargs['int_weights'] = False
+        kwargs['init_weights'] = False
     model = VGG(make_layers(cfg['B']), **kwargs)
     
     if pretrained:
